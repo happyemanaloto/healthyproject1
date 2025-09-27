@@ -1,0 +1,4 @@
+employee_id,name,role,base_daily_salary,base_daily_override,password_hint,commission_multiplier_pool,commission_multiplier_direct
+E001,Employee One,Detailer,500,,1234,,
+E002,Employee Two,Detailer,500,,2468,,
+E003,Team Lead,TeamLead,600,,4321,,

@@ -1,0 +1,15 @@
+rule_id,service_regex,commission_type,percent,notes
+carwash_pool,^Carwash$,pool_split,30,edit percent to change carwash pool
+promo_pool,Promo$,pool_split,30,promos treated as pool - edit as needed
+bac_to_zero_direct,^Bac to Zero$,direct,30,
+wax_buffing_direct,^Wax with buffing$,direct,30,
+engine_wash_direct,^Engine Wash$,direct,30,
+muffler_cleaning_direct,^Muffler Cleaning$,direct,30,
+armour_all_direct,^Armour all$,direct,30,
+seat_cover_install_direct,^Seat Cover Install$,direct,30,
+seat_cover_removal_direct,^Seat Cover Removal$,direct,30,
+interior_detailing_direct,^Interior Detailing$,direct,30,
+exterior_detailing_direct,^Exterior Detailing$,direct,30,
+headlight_cleaning_direct,^Headlight Cleaning$,direct,30,
+handwax_labor_direct,^Handwax Labor$,direct,30,
+glass_restoration_direct,^Glass Restoration$,direct,30,per panel

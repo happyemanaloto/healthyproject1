@@ -1,0 +1,11 @@
+key,value,note
+default_carwash_commission_percent,30,% of Carwash revenue goes to pool
+default_promo_commission_percent,30,% of Promo revenue goes to pool
+default_special_commission_percent,30,% of special services revenue paid direct to performer
+pool_split_services_regex,^(Carwash|.*Promo)$,Regex of services counted as pool_split
+direct_services_regex,^(Bac to Zero|Wax with buffing|Engine Wash|Muffler Cleaning|Armour all|Seat Cover Install|Seat Cover Removal|Interior Detailing|Exterior Detailing|Headlight Cleaning|Handwax Labor|Glass Restoration)$,Regex of services paid direct
+enable_role_multipliers,TRUE,"If TRUE, apply role multipliers below"
+role_multiplier_pool_TeamLead,1.1,TeamLead gets 10% more than normal on pool commissions
+role_multiplier_direct_TeamLead,1.1,TeamLead gets 10% more than normal on direct commissions
+role_multiplier_pool_Detailer,1.0,Default multiplier for Detailer (pool)
+role_multiplier_direct_Detailer,1.0,Default multiplier for Detailer (direct)

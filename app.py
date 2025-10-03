@@ -340,6 +340,67 @@ def who_is_clocked_in(att_df, shift_id, branch_id):
             status[eid] = False
     return [eid for eid, on in status.items() if on]
 
+# ---------- DAILY VISITS VIEW (raw transactions with filters) ----------
+def render_daily_visits_view():
+    st.subheader("📒 Daily Visits — Transactions (raw)")
+
+    tx = load_sheet(SHEET_NAME, TAB_TRANSACTIONS)
+    if tx.empty:
+        st.info("No transactions yet.")
+        return
+
+    # Ensure same columns/order as the sheet
+    tx = ensure_tx_columns(tx).copy()
+
+    # Parse timestamp + helper date column
+    tx["timestamp"] = pd.to_datetime(tx["timestamp_iso"], errors="coerce")
+    tx["date"] = tx["timestamp"].dt.date
+
+    # ---- Filters (Date + Branch + Shift) ----
+    colA, colB, colC = st.columns([1, 1, 1])
+
+    with colA:
+        day = st.date_input("Date", value=pd.Timestamp.now().date())
+
+    with colB:
+        # Optional: branch filter
+        branches = ["ALL"] + sorted(tx["branch_id"].astype(str).str.upper().dropna().unique().tolist()) \
+                   if "branch_id" in tx.columns else ["ALL"]
+        branch_pick = st.selectbox("Branch", options=branches, index=0)
+
+    # Filter by chosen date (and branch)
+    filt = (tx["date"] == day)
+    if branch_pick != "ALL" and "branch_id" in tx.columns:
+        filt &= (tx["branch_id"].astype(str).str.upper() == branch_pick)
+
+    tx_day = tx.loc[filt].copy()
+
+    with colC:
+        shifts = ["ALL"] + sorted(tx_day["shift_id"].dropna().unique().tolist())
+        shift_pick = st.selectbox("Shift", options=shifts, index=0)
+
+    if shift_pick != "ALL":
+        tx_day = tx_day[tx_day["shift_id"] == shift_pick]
+
+    # Sort for readability (same as your screenshot)
+    tx_day = tx_day.sort_values(["timestamp_iso","visit_id"])
+
+    st.caption(
+        f"Showing {len(tx_day):,} row(s) for {day}"
+        + (f", branch {branch_pick}" if branch_pick != "ALL" else "")
+        + (f", shift {shift_pick}" if shift_pick != "ALL" else "")
+    )
+
+    # Show EXACT columns as in the sheet (TX_COLS order)
+    st.dataframe(tx_day[TX_COLS], use_container_width=True)
+
+    # Download
+    st.download_button(
+        "⬇️ Download CSV (filtered)",
+        data=tx_day[TX_COLS].to_csv(index=False),
+        file_name=f"transactions_{day}_{branch_pick}_{shift_pick}.csv",
+        mime="text/csv",
+    )
 
 def compute_commissions(start_date, end_date, branch_filter: str | None = None):
     """
@@ -726,7 +787,12 @@ st.set_page_config(page_title="RJ AutoSpa Payroll", page_icon="🧽", layout="wi
 st.title("🏎️ Bodi's 24/7 Car Wash Payroll")
 
 # Tabs
-tab_run, tab_tx_b1, tab_tx_b2, tab_admin, tab_pay = st.tabs(["Clock In/Out", "Log Visit — Branch 1", "Log Visit — Branch 2", "Admin", "Payroll"])
+# tab_run, tab_tx_b1, tab_tx_b2, tab_admin, tab_pay = st.tabs(["Clock In/Out", "Log Visit — Branch 1", "Log Visit — Branch 2", "Admin", "Payroll"])
+tab_run, tab_tx_b1, tab_tx_b2, tab_admin, tab_pay, tab_visits = st.tabs(
+    ["Clock In/Out", "Log Visit — Branch 1", "Log Visit — Branch 2", "Admin", "Payroll", "Visits/Transactions"]
+)
+with tab_visits:
+    render_daily_visits_view()
 
 
 with tab_admin:
